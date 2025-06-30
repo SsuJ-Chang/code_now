@@ -3,7 +3,7 @@ import io, { Socket } from 'socket.io-client';
 import Header from './components/Header';
 import Editor from './components/Editor';
 
-const SOCKET_URL = 'http://localhost:4000'; // The URL of our backend server
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:4000';
 
 function App() {
   const [socket, setSocket] = useState<Socket | null>(null);
