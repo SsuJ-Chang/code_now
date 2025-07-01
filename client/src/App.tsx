@@ -80,6 +80,7 @@ function App() {
           language={language} 
           code={currentCode} 
           onCodeChange={handleCodeChange} 
+          socket={socket} // Pass socket to Editor
         />
       </main>
     </div>

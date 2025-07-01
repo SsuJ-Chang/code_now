@@ -10,6 +10,8 @@ services:
   client:
     build:
       context: ./client
+      args:
+        - VITE_SOCKET_URL=http://localhost:4000
     ports:
       - "8080:80" # Map host port 8080 to container port 80
     container_name: code_now_client

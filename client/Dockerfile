@@ -13,6 +13,12 @@ RUN npm install
 # Copy the rest of the application data
 COPY . .
 
+# Add build argument for the backend URL
+ARG VITE_SOCKET_URL
+
+# Set the environment variable for the build process
+ENV VITE_SOCKET_URL=$VITE_SOCKET_URL
+
 # Build the application
 RUN npm run build
 

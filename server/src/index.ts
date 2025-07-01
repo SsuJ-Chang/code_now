@@ -30,13 +30,22 @@ io.on('connection', (socket) => {
     socket.broadcast.emit('code-update', data);
   });
 
-  socket.on('language-change', (language: string) => {
+  socket.on('language-change', (lang: string) => {
     // Broadcast the language change to all clients
-    io.emit('language-change', language);
+    io.emit('language-change', lang);
+  });
+
+  // Handle cursor and selection updates
+  socket.on('cursor-selection-update', (data: { ranges: { from: number, to: number }[] }) => {
+    const color = '#FFFFFF'; // Default color for cursor
+    // Broadcast cursor and selection to all other clients, including the color
+    socket.broadcast.emit('cursor-selection-update', { userId: socket.id, color, ...data });
   });
 
   socket.on('disconnect', () => {
     console.log('user disconnected');
+    // Broadcast that a user disconnected so their cursor/selection can be removed
+    socket.broadcast.emit('user-disconnected', socket.id);
   });
 });
 
