@@ -4,6 +4,8 @@ services:
     build:
       context: ./server
     container_name: code_now_server
+    ports:
+      - "4000:4000"
     environment:
       - CORS_ORIGIN=${CORS_ORIGIN}
 
@@ -13,5 +15,17 @@ services:
       args:
         - VITE_SOCKET_URL=${VITE_SOCKET_URL}
     container_name: code_now_client
+    ports:
+      - "80:80"
     depends_on:
+      - server
+
+  nginx:
+    build:
+      context: ./nginx
+    container_name: code_now_nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - client
       - server
