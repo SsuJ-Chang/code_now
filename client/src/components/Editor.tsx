@@ -28,18 +28,6 @@ class RemoteCursorWidget extends WidgetType {
     cursor.style.height = '1.2em'; // Original height
     cursor.style.position = 'absolute';
     cursor.style.animation = 'blink 1s infinite'; // Original animation
-
-    // Define keyframes for the blink animation
-    const styleSheet = document.styleSheets[0];
-    const keyframes = `@keyframes blink {
-      0% { opacity: 0; }
-      50% { opacity: 1; }
-      100% { opacity: 0; }
-    }`;
-    // Only insert if not already present to avoid errors
-    if (!styleSheet.cssRules || !Array.from(styleSheet.cssRules).some(rule => rule.cssText.includes('@keyframes blink'))) {
-      styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
-    }
     return cursor;
   }
 
@@ -171,26 +159,38 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket }) => {
     }
   }, [remoteSelections]);
 
+  const throttleTimeout = useRef<number | null>(null);
+
   const handleEditorUpdate = (viewUpdate: any) => {
     if (viewUpdate.selectionSet && socket) {
-      const selectionRanges = viewUpdate.view.state.selection.ranges.map((range: any) => ({
-        from: range.from,
-        to: range.to,
-      }));
-      socket.emit('cursor-selection-update', { ranges: selectionRanges });
+      if (throttleTimeout.current) {
+        clearTimeout(throttleTimeout.current);
+      }
+      throttleTimeout.current = setTimeout(() => {
+        const selectionRanges = viewUpdate.view.state.selection.ranges.map((range: any) => ({
+          from: range.from,
+          to: range.to,
+        }));
+        socket.emit('cursor-selection-update', { ranges: selectionRanges });
+        throttleTimeout.current = null;
+      }, 50); // Throttle to 50ms
     }
   };
+
+  const memoizedExtensions = React.useMemo(() => {
+    return [
+      ...extensions,
+      remoteSelectionCompartment.of([remoteSelectionField]),
+      EditorView.updateListener.of(handleEditorUpdate)
+    ];
+  }, [extensions, remoteSelectionCompartment, remoteSelectionField, handleEditorUpdate]);
 
   return (
     <CodeMirror
       value={code}
       height="calc(100vh - 70px)"
       theme={okaidia}
-      extensions={[
-        ...extensions,
-        remoteSelectionCompartment.of([remoteSelectionField]),
-        EditorView.updateListener.of(handleEditorUpdate)
-      ]}
+      extensions={memoizedExtensions}
       onChange={(value) => onCodeChange(value)}
       onCreateEditor={(view) => {
         editorViewRef.current = view;
@@ -200,4 +200,4 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket }) => {
   );
 };
 
-export default Editor;
+export default React.memo(Editor);

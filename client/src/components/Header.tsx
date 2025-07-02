@@ -1,5 +1,7 @@
 
 
+import React from 'react';
+
 type Props = {
   language: string;
   setLanguage: (language: string) => void;
@@ -32,4 +34,4 @@ const Header: React.FC<Props> = ({ language, setLanguage, isConnected }) => {
   );
 };
 
-export default Header;
+export default React.memo(Header);

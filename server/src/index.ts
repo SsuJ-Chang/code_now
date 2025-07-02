@@ -6,7 +6,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "*", // Allow all origins for simplicity
+    origin: process.env.CORS_ORIGIN || "*", // Allow all origins for simplicity, or specify in production
     methods: ["GET", "POST"]
   }
 });
