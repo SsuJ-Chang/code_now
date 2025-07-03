@@ -15,8 +15,6 @@ services:
       args:
         - VITE_SOCKET_URL=${VITE_SOCKET_URL}
     container_name: code_now_client
-    ports:
-      - "80:80"
     depends_on:
       - server
 
