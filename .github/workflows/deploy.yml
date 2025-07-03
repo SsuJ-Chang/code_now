@@ -1,0 +1,37 @@
+name: Deploy to EC2
+
+on:
+  push:
+    branches:
+      - main # 當推送到 main 分支時觸發
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest # 使用最新的 Ubuntu 執行器
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4 # 拉取程式碼
+
+    - name: Set up SSH
+      uses: webfactory/ssh-agent@v0.9.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }} # 從 GitHub Secrets 獲取私鑰
+
+    - name: Deploy to EC2
+      run: |
+        # 連線到 EC2 並執行部署命令
+        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
+          cd /home/ubuntu/code_now # 替換為你在 EC2 上的專案路徑
+          git pull origin main # 拉取最新程式碼
+          
+          # 設定環境變數，這些變數會被 docker-compose 讀取並傳遞給容器
+          export VITE_SOCKET_URL="${{ secrets.VITE_SOCKET_URL }}"
+          export CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}"
+
+          docker-compose down # 停止並移除舊的容器
+          docker-compose up -d --build # 重建並啟動新的容器
+          
+          # 可選：清理舊的 Docker 映像檔和卷，釋放空間
+          docker system prune -f
+        EOF
