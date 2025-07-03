@@ -1,4 +1,4 @@
-[English](#english) | [繁體中文](#繁體中文)
+[繁體中文](#繁體中文) | [English](#english)
 
 ---
 
