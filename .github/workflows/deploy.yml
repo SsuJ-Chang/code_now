@@ -20,10 +20,29 @@ jobs:
 
     - name: Deploy to EC2
       run: |
+        set -x # 啟用 shell 偵錯模式，顯示執行的命令
         # 連線到 EC2 並執行部署命令
         ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
+          set -x # 啟用 shell 偵錯模式，顯示執行的命令
           cd /home/ubuntu/code_now # 替換為你在 EC2 上的專案路徑
+          
+          echo "--- Debug Info ---"
+          echo "Current directory: $(pwd)"
+          echo "Git version: $(git --version)"
+          echo "SSH agent status (should list keys):"
+          ssh-add -l || true # 列出 SSH agent 中的金鑰，如果沒有則不報錯
+          echo "Git config remote.origin.url: $(git config remote.origin.url)"
+          echo "--- End Debug Info ---"
+          
+          echo "Git status before pull:"
+          git status
+          echo "Git remote -v before pull:"
+          git remote -v
+          
           git pull origin main # 拉取最新程式碼
+          
+          echo "Git status after pull:"
+          git status
           
           # 設定環境變數，這些變數會被 docker-compose 讀取並傳遞給容器
           export VITE_SOCKET_URL="${{ secrets.VITE_SOCKET_URL }}"
