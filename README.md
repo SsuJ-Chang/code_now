@@ -14,7 +14,7 @@
 
 ## 專案簡介
 
-**CODE NOW** 是一個即時協作的程式碼編輯器，旨在提供一個多使用者能夠同時編輯程式碼的平台。它支援 JavaScript 和 Python 兩種語言，並能即時同步所有參與者的程式碼變更、游標位置及選取範圍，提供流暢的協作體驗。
+**CODE NOW** 是一個即時協作的程式碼編輯器，旨在提供一個多使用者能夠同時編輯程式碼的平台。您可以透過此連結訪問：[https://codenow.rj-tw.com/](https://codenow.rj-tw.com/)。它支援 JavaScript 和 Python 兩種語言，並能即時同步所有參與者的程式碼變更、游標位置及選取範圍，提供流暢的協作體驗。
 
 ## 主要功能
 
@@ -44,6 +44,7 @@
 
 ### 部署與基礎設施
 
+*   **部署環境**：主要部署於 [AWS EC2](https://aws.amazon.com/ec2/) 實例上，利用其彈性計算能力運行容器化應用。
 *   **容器化**：[Docker](https://www.docker.com/)
 *   **多容器編排**：[Docker Compose](https://docs.docker.com/compose/)
 *   **反向代理/Web 伺服器**：[Nginx](https://nginx.org/)
@@ -64,7 +65,7 @@
 
 ## Project Overview
 
-**CODE NOW** is a real-time collaborative code editor designed to provide a platform where multiple users can simultaneously edit code. It supports both JavaScript and Python, and instantly synchronizes all participants' code changes, cursor positions, and selection ranges, offering a seamless collaborative experience.
+**CODE NOW** is a real-time collaborative code editor designed to provide a platform where multiple users can simultaneously edit code. You can access it via this link: [https://codenow.rj-tw.com/](https://codenow.rj-tw.com/). It supports both JavaScript and Python, and instantly synchronizes all participants' code changes, cursor positions, and selection ranges, offering a seamless collaborative experience.
 
 ## Key Features
 
@@ -94,6 +95,7 @@ This project utilizes a modern full-stack technology stack, ensuring high perfor
 
 ### Deployment & Infrastructure
 
+*   **Deployment Environment**: Primarily deployed on [AWS EC2](https://aws.amazon.com/ec2/) instances, leveraging its elastic compute capabilities to run containerized applications.
 *   **Containerization**: [Docker](https://www.docker.com/)
 *   **Multi-container Orchestration**: [Docker Compose](https://docs.docker.com/compose/)
 *   **Reverse Proxy/Web Server**: [Nginx](https://nginx.org/)
