@@ -5,16 +5,16 @@
 <a name="繁體中文"></a>
 
 ## 目錄
-*   [專案簡介](#專案簡介)
+*   [概述](#概述)
 *   [主要功能](#主要功能)
 *   [技術棧](#技術棧)
-    *   [前端 (Client)](#前端-client)
-    *   [後端 (Server)](#後端-server)
+    *   [前端](#前端)
+    *   [後端](#後端)
     *   [部署與基礎設施](#部署與基礎設施)
 
-## 專案簡介
+## 概述
 
-**CODE NOW** 是一個即時協作的程式碼編輯器，旨在提供一個多使用者能夠同時編輯程式碼的平台。您可以透過此連結訪問：[https://codenow.rj-tw.com/](https://codenow.rj-tw.com/)。它支援 JavaScript 和 Python 兩種語言，並能即時同步所有參與者的程式碼變更、游標位置及選取範圍，提供流暢的協作體驗。
+[**CODE NOW**](https://codenow.rj-tw.com/) 是一個即時協作的程式碼編輯器，旨在提供一個多使用者能夠同時編輯程式碼的平台。支援 JavaScript 和 Python 兩種語言，並能即時同步所有參與者的程式碼變更、游標位置及選取範圍，提供流暢的協作體驗。
 
 ## 主要功能
 
@@ -28,7 +28,7 @@
 
 本專案採用現代化的全端技術棧，確保高效能、可擴展性和易於維護性。
 
-### 前端 (Client)
+### 前端
 
 *   **框架**：[React](https://react.dev/) (TypeScript)
 *   **建置工具**：[Vite](https://vitejs.dev/)
@@ -36,7 +36,7 @@
 *   **即時通訊**：[Socket.IO Client](https://socket.io/docs/v4/client-api/)
 *   **樣式**：[Tailwind CSS](https://tailwindcss.com/) (搭配 PostCSS 和 Autoprefixer)
 
-### 後端 (Server)
+### 後端
 
 *   **運行環境**：[Node.js](https://nodejs.org/)
 *   **框架**：[Express.js](https://expressjs.com/) (TypeScript)
@@ -44,7 +44,7 @@
 
 ### 部署與基礎設施
 
-*   **部署環境**：主要部署於 [AWS EC2](https://aws.amazon.com/ec2/) 實例上，利用其彈性計算能力運行容器化應用。
+*   **部署環境**：部署於 [AWS EC2](https://aws.amazon.com/ec2/) 實例上，利用其彈性計算能力運行容器化應用。
 *   **容器化**：[Docker](https://www.docker.com/)
 *   **多容器編排**：[Docker Compose](https://docs.docker.com/compose/)
 *   **反向代理/Web 伺服器**：[Nginx](https://nginx.org/)
@@ -56,16 +56,16 @@
 <a name="english"></a>
 
 ## Table of Contents
-*   [Project Overview](#project-overview)
+*   [Overview](#project)
 *   [Key Features](#key-features)
 *   [Technology Stack](#technology-stack)
-    *   [Frontend (Client)](#frontend-client)
-    *   [Backend (Server)](#backend-server)
+    *   [Frontend](#frontend)
+    *   [Backend](#backend)
     *   [Deployment & Infrastructure](#deployment--infrastructure)
 
-## Project Overview
+## Overview
 
-**CODE NOW** is a real-time collaborative code editor designed to provide a platform where multiple users can simultaneously edit code. You can access it via this link: [https://codenow.rj-tw.com/](https://codenow.rj-tw.com/). It supports both JavaScript and Python, and instantly synchronizes all participants' code changes, cursor positions, and selection ranges, offering a seamless collaborative experience.
+[**CODE NOW**](https://codenow.rj-tw.com/) is a real-time collaborative code editor designed to provide a platform where multiple users can simultaneously edit code. It supports both JavaScript and Python, and instantly synchronizes all participants' code changes, cursor positions, and selection ranges, offering a seamless collaborative experience.
 
 ## Key Features
 
@@ -79,7 +79,7 @@
 
 This project utilizes a modern full-stack technology stack, ensuring high performance, scalability, and maintainability.
 
-### Frontend (Client)
+### Frontend
 
 *   **Framework**: [React](https://react.dev/) (TypeScript)
 *   **Build Tool**: [Vite](https://vitejs.dev/)
@@ -87,7 +87,7 @@ This project utilizes a modern full-stack technology stack, ensuring high perfor
 *   **Real-time Communication**: [Socket.IO Client](https://socket.io/docs/v4/client-api/)
 *   **Styling**: [Tailwind CSS](https://tailwindcss.com/) (with PostCSS and Autoprefixer)
 
-### Backend (Server)
+### Backend
 
 *   **Runtime**: [Node.js](https://nodejs.org/)
 *   **Framework**: [Express.js](https://expressjs.com/) (TypeScript)
@@ -95,7 +95,7 @@ This project utilizes a modern full-stack technology stack, ensuring high perfor
 
 ### Deployment & Infrastructure
 
-*   **Deployment Environment**: Primarily deployed on [AWS EC2](https://aws.amazon.com/ec2/) instances, leveraging its elastic compute capabilities to run containerized applications.
+*   **Deployment Environment**: Deployed on [AWS EC2](https://aws.amazon.com/ec2/) instances, leveraging its elastic compute capabilities to run containerized applications.
 *   **Containerization**: [Docker](https://www.docker.com/)
 *   **Multi-container Orchestration**: [Docker Compose](https://docs.docker.com/compose/)
 *   **Reverse Proxy/Web Server**: [Nginx](https://nginx.org/)
