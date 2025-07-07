@@ -7,7 +7,11 @@ services:
     ports:
       - "4000:4000"
     environment:
+      environment:
       - CORS_ORIGIN=${CORS_ORIGIN}
+      - DEFAULT_PYTHON_CODE=${DEFAULT_PYTHON_CODE:-# Start typing Python code...}
+      - DEFAULT_JAVASCRIPT_CODE=${DEFAULT_JAVASCRIPT_CODE:-// Start typing JavaScript code...}
+      - MAX_EDITORS=${MAX_EDITORS:-2} # Default to 2 if not set
 
   client:
     build:

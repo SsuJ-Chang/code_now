@@ -14,6 +14,7 @@ type Props = {
   code: string;
   onCodeChange: (code: string) => void;
   socket: Socket | null;
+  canEdit: boolean; // 新增 canEdit 屬性
 };
 
 // Define a custom widget for the remote cursor
@@ -34,10 +35,10 @@ class RemoteCursorWidget extends WidgetType {
   ignoreEvent() { return true; }
 }
 
-const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket }) => {
+const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket, canEdit }) => { // 接收 canEdit
   const [remoteSelections, setRemoteSelections] = useState<Record<string, RemoteSelection>>({});
   const editorViewRef = useRef<EditorView | null>(null);
-  const cursorTimers = useRef<Map<string, number>>(new Map()); // Changed to number
+  const cursorTimers = useRef<Map<string, number>>(new Map());
 
   const extensions = language === 'javascript' ? [javascript({ jsx: true })] : [python()];
 
@@ -131,23 +132,23 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket }) => {
 
   useEffect(() => {
     if (editorViewRef.current) {
-      const newDecorations: Range<Decoration>[] = []; // Corrected type
+      const newDecorations: Range<Decoration>[] = [];
 
       for (const userId in remoteSelections) {
         const selection = remoteSelections[userId];
-        const color = selection.color; // Use color from backend
+        const color = selection.color;
 
         selection.ranges.forEach(range => {
           // Add selection decoration
           if (range.from !== range.to) {
             newDecorations.push(Decoration.mark({
-              attributes: { style: `background-color: rgba(200, 200, 200, 0.3);` } // Gray with 30% opacity
+              attributes: { style: `background-color: rgba(200, 200, 200, 0.3);` }
             }).range(range.from, range.to));
           }
           // Add cursor decoration
           newDecorations.push(Decoration.widget({
             widget: new RemoteCursorWidget(color),
-            side: 1 // Place cursor after the character
+            side: 1
           }).range(range.to));
         });
       }
@@ -162,7 +163,8 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket }) => {
   const throttleTimeout = useRef<number | null>(null);
 
   const handleEditorUpdate = (viewUpdate: any) => {
-    if (viewUpdate.selectionSet && socket) {
+    // 只有在 canEdit 為 true 時才發送游標和選取範圍更新
+    if (canEdit && viewUpdate.selectionSet && socket) {
       if (throttleTimeout.current) {
         clearTimeout(throttleTimeout.current);
       }
@@ -173,7 +175,7 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket }) => {
         }));
         socket.emit('cursor-selection-update', { ranges: selectionRanges });
         throttleTimeout.current = null;
-      }, 50); // Throttle to 50ms
+      }, 50);
     }
   };
 
@@ -191,11 +193,16 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket }) => {
       height="calc(100vh - 70px)"
       theme={okaidia}
       extensions={memoizedExtensions}
-      onChange={(value) => onCodeChange(value)}
+      onChange={(value) => {
+        if (canEdit) { // 只有在 canEdit 為 true 時才允許修改程式碼
+          onCodeChange(value);
+        }
+      }}
       onCreateEditor={(view) => {
         editorViewRef.current = view;
       }}
       className="text-lg"
+      readOnly={!canEdit} // 根據 canEdit 屬性設定 readOnly
     />
   );
 };
