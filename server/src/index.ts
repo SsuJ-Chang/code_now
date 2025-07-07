@@ -16,7 +16,7 @@ let javascriptCode = process.env.DEFAULT_JAVASCRIPT_CODE || '// Start typing Jav
 
 // 儲存所有連線的 Socket ID，用於計算當前編輯者數量
 const connectedEditors = new Set<string>();
-const MAX_EDITORS = parseInt(process.env.MAX_EDITORS || '2', 10); // 確保這裡的預設值與 docker-compose.yml 一致
+const MAX_EDITORS = parseInt(process.env.MAX_EDITORS || '2', 10); // 確保這裡的預設值與 docker-compose.yml 都一致
 console.log(`Server initialized with MAX_EDITORS: ${MAX_EDITORS}`); // 新增日誌
 
 io.on('connection', (socket) => {
