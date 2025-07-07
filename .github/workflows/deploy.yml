@@ -27,6 +27,7 @@ jobs:
           # 設定環境變數，這些變數會被 docker-compose 讀取並傳遞給容器
           export VITE_SOCKET_URL="${{ secrets.VITE_SOCKET_URL }}"
           export CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}"
+          export MAX_EDITORS="${{ secrets.MAX_EDITORS }}"
 
           docker-compose down # 停止並移除舊的容器
           docker-compose up -d --build # 重建並啟動新的容器
