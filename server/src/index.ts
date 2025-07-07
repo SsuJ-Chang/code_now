@@ -40,6 +40,8 @@ io.on('connection', (socket) => {
     currentEditors: connectedEditors.size
   });
 
+  console.log(`Current connections: ${io.engine.clientsCount}, Editable connections: ${connectedEditors.size}/${MAX_EDITORS}`); // 新增日誌
+
   socket.on('code-update', (data: { language: string, code: string }) => {
     if (!canEdit) {
       console.log(`Viewer ${socket.id} attempted to update code.`);
