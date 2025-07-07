@@ -11,9 +11,8 @@ function App() {
   const [language, setLanguage] = useState('javascript');
   const [pythonCode, setPythonCode] = useState('');
   const [javascriptCode, setJavascriptCode] = useState('');
-  const [canEdit, setCanEdit] = useState(true);
-  const [viewOnlyMessage, setViewOnlyMessage] = useState('');
-  const [currentEditorsCount, setCurrentEditorsCount] = useState(0); // 新增狀態來儲存當前編輯者數量
+  const [canEdit, setCanEdit] = useState(true); // 新增 canEdit 狀態
+  const [viewOnlyMessage, setViewOnlyMessage] = useState(''); // 新增提示訊息狀態
 
   useEffect(() => {
     const newSocket = io(SOCKET_URL);
@@ -33,7 +32,6 @@ function App() {
       setPythonCode(data.python);
       setJavascriptCode(data.javascript);
       setCanEdit(data.canEdit);
-      setCurrentEditorsCount(data.currentEditors); // 更新當前編輯者數量
       if (!data.canEdit) {
         setViewOnlyMessage(`目前已達最大共筆人數 (${data.maxEditors} 人)。您目前只有觀看權限。`);
       } else {
@@ -54,7 +52,6 @@ function App() {
     });
 
     newSocket.on('editor-count-update', (data: { currentEditors: number, maxEditors: number }) => {
-      setCurrentEditorsCount(data.currentEditors); // 更新當前編輯者數量
       if (data.currentEditors < data.maxEditors && !canEdit) {
         setCanEdit(true);
         setViewOnlyMessage('現在有編輯權限了！');
@@ -66,17 +63,10 @@ function App() {
       }
     });
 
-    // 將函數掛載到 window 物件上，以便在控制台調用
-    (window as any).getCurrentEditorCount = () => {
-      return currentEditorsCount;
-    };
-
     return () => {
       newSocket.disconnect();
-      // 清理 window 物件上的函數
-      delete (window as any).getCurrentEditorCount;
     };
-  }, [canEdit, currentEditorsCount]); // 監聽 canEdit 和 currentEditorsCount 變化
+  }, [canEdit]); // 監聽 canEdit 變化，以便在 editor-count-update 中正確判斷
 
   const handleLanguageChange = (lang: string) => {
     if (!canEdit) return;
