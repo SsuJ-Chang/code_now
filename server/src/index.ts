@@ -16,7 +16,8 @@ let javascriptCode = process.env.DEFAULT_JAVASCRIPT_CODE || '// Start typing Jav
 
 // 儲存所有連線的 Socket ID，用於計算當前編輯者數量
 const connectedEditors = new Set<string>();
-const MAX_EDITORS = parseInt(process.env.MAX_EDITORS || '2', 10);
+const MAX_EDITORS = parseInt(process.env.MAX_EDITORS || '2', 10); // 確保這裡的預設值與 docker-compose.yml 一致
+console.log(`Server initialized with MAX_EDITORS: ${MAX_EDITORS}`); // 新增日誌
 
 io.on('connection', (socket) => {
   console.log('a user connected');
@@ -24,13 +25,13 @@ io.on('connection', (socket) => {
   let canEdit = true;
   if (connectedEditors.size >= MAX_EDITORS) {
     canEdit = false;
-    console.log(`User ${socket.id} connected as viewer (max editors reached).`);
+    console.log(`User ${socket.id} connected as viewer (max editors reached). Current editors: ${connectedEditors.size}/${MAX_EDITORS}`);
   } else {
     connectedEditors.add(socket.id);
-    console.log(`User ${socket.id} connected as editor. Current editors: ${connectedEditors.size}`);
+    console.log(`User ${socket.id} connected as editor. Current editors: ${connectedEditors.size}/${MAX_EDITORS}`);
   }
 
-  // Send the current code and editing permission to the new user
+  console.log(`Emitting initial-state for ${socket.id}: canEdit=${canEdit}`);
   socket.emit('initial-state', {
     python: pythonCode,
     javascript: javascriptCode,
@@ -75,13 +76,13 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
     console.log('user disconnected');
-    if (canEdit) { // 只有編輯者斷開時才從集合中移除
+    if (canEdit) {
       connectedEditors.delete(socket.id);
-      console.log(`Editor ${socket.id} disconnected. Current editors: ${connectedEditors.size}`);
-      // 通知所有客戶端當前編輯者數量可能已減少
+      console.log(`Editor ${socket.id} disconnected. Current editors: ${connectedEditors.size}/${MAX_EDITORS}`);
       io.emit('editor-count-update', { currentEditors: connectedEditors.size, maxEditors: MAX_EDITORS });
+    } else {
+      console.log(`Viewer ${socket.id} disconnected.`);
     }
-    // Broadcast that a user disconnected so their cursor/selection can be removed
     socket.broadcast.emit('user-disconnected', socket.id);
   });
 });
