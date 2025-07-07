@@ -20,6 +20,7 @@ jobs:
 
     - name: Deploy to EC2
       run: |
+        echo "MAX_EDITORS value from GitHub Secrets: ${{ secrets.MAX_EDITORS }}" # 追蹤點 1: 在 SSH 之前
         ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
           cd /home/ubuntu/code_now # 替換為你在 EC2 上的專案路徑
           git pull origin main # 拉取最新程式碼
@@ -28,6 +29,8 @@ jobs:
           export VITE_SOCKET_URL="${{ secrets.VITE_SOCKET_URL }}"
           export CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}"
           export MAX_EDITORS="${{ secrets.MAX_EDITORS }}"
+
+          echo "MAX_EDITORS value inside EC2 SSH session: $MAX_EDITORS" # 追蹤點 2: 在 docker-compose 之前
 
           docker-compose down # 停止並移除舊的容器
           docker-compose up -d --build # 重建並啟動新的容器
