@@ -1,3 +1,5 @@
+console.log(`Server Code Version: ${Math.random().toString(36).substring(2, 8)}`); // Unique identifier
+
 import express from 'express';
 import http from 'http';
 import { Server } from 'socket.io';
@@ -82,7 +84,8 @@ io.on('connection', (socket) => {
       connectedEditors.delete(socket.id);
       console.log(`Editor ${socket.id} disconnected. Current editors: ${connectedEditors.size}/${MAX_EDITORS}`);
       io.emit('editor-count-update', { currentEditors: connectedEditors.size, maxEditors: MAX_EDITORS });
-    } else {
+    }
+    else {
       console.log(`Viewer ${socket.id} disconnected.`);
     }
     socket.broadcast.emit('user-disconnected', socket.id);
