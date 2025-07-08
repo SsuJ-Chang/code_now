@@ -24,7 +24,7 @@ jobs:
         ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
           echo "--- Starting Deployment on EC2 ---"
           cd /home/ubuntu/code_now # 替換為你在 EC2 上的專案路徑
-          git pull origin main # 拉取最新程式碼
+          git pull origin main # 拉取最新的程式碼
           echo "Latest code pulled."
           
           # 設定環境變數，這些變數會被 docker-compose 讀取並傳遞給容器
