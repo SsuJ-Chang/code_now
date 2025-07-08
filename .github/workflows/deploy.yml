@@ -20,36 +20,51 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        echo "MAX_EDITORS value from GitHub Secrets: ${{ secrets.MAX_EDITORS }}" # 追蹤點 1: 在 SSH 之前
-        ssh -o StrictHostKeyChecking=no ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} << 'EOF'
-          echo "--- Starting Deployment on EC2 ---"
-          cd /home/ubuntu/code_now # 替換為你在 EC2 上的專案路徑
-          git pull origin main # 拉取最新的程式碼
-          echo "Latest code pulled."
-          
-          # 設定環境變數，這些變數會被 docker-compose 讀取並傳遞給容器
-          export VITE_SOCKET_URL="${{ secrets.VITE_SOCKET_URL }}"
-          export CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}"
-          export MAX_EDITORS="${{ secrets.MAX_EDITORS }}"
+        set -e # Exit immediately if a command exits with a non-zero status.
 
-          echo "Environment variables set: MAX_EDITORS=$MAX_EDITORS"
+        echo "--- Starting Deployment on EC2 ---"
+        echo "Current user: $(whoami)"
+        echo "Current directory: $(pwd)"
 
-          echo "Stopping and removing old containers..."
-          docker-compose down --volumes # 停止並移除舊的容器和卷
-          echo "Old containers and volumes removed."
+        cd /home/ubuntu/code_now # 替換為你在 EC2 上的專案路徑
+        echo "Changed directory to: $(pwd)"
 
-          echo "Removing old Docker images..."
-          docker rmi $(docker images -q --filter "dangling=true") || true # 移除懸空映像
-          docker rmi $(docker images -q --filter "label=com.docker.compose.project=code_now") || true # 移除專案相關映像
-          echo "Old Docker images removed."
+        echo "Checking git status before pull..."
+        git status
+        echo "Current commit before pull:"
+        git log -1
 
-          echo "Building and starting new containers..."
-          docker-compose up -d --build # 重建並啟動新的容器
-          echo "New containers built and started."
+        echo "Pulling latest code from main branch..."
+        git pull origin main # 拉取最新程式碼
+        echo "Latest code pulled."
 
-          echo "Verifying running containers..."
-          docker ps -a # 顯示所有容器狀態
-          docker images # 顯示所有映像
+        echo "Checking git status after pull..."
+        git status
+        echo "Current commit after pull:"
+        git log -1
+        
+        # 設定環境變數，這些變數會被 docker-compose 讀取並傳遞給容器
+        export VITE_SOCKET_URL="${{ secrets.VITE_SOCKET_URL }}"
+        export CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}"
+        export MAX_EDITORS="${{ secrets.MAX_EDITORS }}"
 
-          echo "--- Deployment to EC2 Finished ---"
-        EOF
+        echo "Environment variables set: MAX_EDITORS=$MAX_EDITORS"
+
+        echo "Stopping and removing old containers..."
+        docker-compose down --volumes # 停止並移除舊的容器和卷
+        echo "Old containers and volumes removed."
+
+        echo "Removing old Docker images..."
+        docker rmi $(docker images -q --filter "dangling=true") || true # 移除懸空映像
+        docker rmi $(docker images -q --filter "label=com.docker.compose.project=code_now") || true # 移除專案相關映像
+        echo "Old Docker images removed."
+
+        echo "Building and starting new containers..."
+        docker-compose up -d --build # 重建並啟動新的容器
+        echo "New containers built and started."
+
+        echo "Verifying running containers..."
+        docker ps -a # 顯示所有容器狀態
+        docker images # 顯示所有映像
+
+        echo "--- Deployment to EC2 Finished ---"
