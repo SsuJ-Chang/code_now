@@ -20,24 +20,36 @@ jobs:
 
     - name: Deploy to EC2
       run: |
-        set -e # Exit immediately if a command exits with a non-zero status.
+        set -ex # Exit immediately if a command exits with a non-zero status, and print commands
 
         echo "--- Starting Deployment on EC2 ---"
+        echo "EC2_USERNAME: ${{ secrets.EC2_USERNAME }}"
+        echo "EC2_HOST: ${{ secrets.EC2_HOST }}"
+
         echo "Verifying current user and permissions:"
         echo "Current user: $(whoami)"
         echo "User ID and groups: $(id)"
         echo "Current working directory: $(pwd)"
 
+        echo "Checking / directory permissions..."
+        ls -ld /
+
         echo "Checking /home directory permissions..."
         ls -ld /home
 
         echo "Checking /home/ubuntu directory permissions..."
+        ls -ld /home/ubuntu || true # Allow failure if directory doesn't exist
+
+        echo "Ensuring /home/ubuntu directory exists and has correct ownership..."
+        sudo mkdir -p /home/ubuntu # Create /home/ubuntu if it doesn't exist
+        sudo chown -R ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} /home/ubuntu # Ensure ownership
+        echo "/home/ubuntu directory status after ensuring existence and ownership:"
         ls -ld /home/ubuntu
 
-        echo "Attempting to create project directory with sudo..."
+        echo "Ensuring target project directory exists with sudo..."
         sudo mkdir -p /home/ubuntu/code_now
         echo "Attempting to set ownership of project directory..."
-        sudo chown -R $(whoami):$(whoami) /home/ubuntu/code_now
+        sudo chown -R ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} /home/ubuntu/code_now
 
         echo "Verifying project directory status after creation/ownership change..."
         ls -ld /home/ubuntu/code_now
