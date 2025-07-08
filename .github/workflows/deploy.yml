@@ -26,6 +26,11 @@ jobs:
         echo "Current user: $(whoami)"
         echo "Current directory: $(pwd)"
 
+        echo "Checking target directory status before cd..."
+        ls -ld /home/ubuntu/code_now || true # 檢查目錄狀態，即使失敗也繼續
+        echo "Ensuring target directory exists..."
+        mkdir -p /home/ubuntu/code_now # 確保目錄存在
+
         cd /home/ubuntu/code_now # 替換為你在 EC2 上的專案路徑
         echo "Changed directory to: $(pwd)"
 
