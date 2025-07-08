@@ -42,12 +42,15 @@ jobs:
 
         echo "Ensuring /home/ubuntu directory exists and has correct ownership..."
         sudo mkdir -p /home/ubuntu # Create /home/ubuntu if it doesn't exist
-        sudo chown -R ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} /home/ubuntu # Ensure ownership
+        echo "Value of EC2_USERNAME inside SSH session: $EC2_USERNAME" # Debugging line
+        sudo chown -R ubuntu:ubuntu /home/ubuntu # Hardcode ubuntu for testing
+        echo "/home/ubuntu directory status after ensuring existence and ownership:"
+        ls -ld /home/ubuntu
 
         echo "Ensuring target project directory exists with sudo..."
         sudo mkdir -p /home/ubuntu/code_now
         echo "Attempting to set ownership of project directory..."
-        sudo chown -R ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} /home/ubuntu/code_now
+        sudo chown -R ubuntu:ubuntu /home/ubuntu/code_now # Hardcode ubuntu for testing
 
         echo "Verifying project directory status after creation/ownership change..."
         ls -ld /home/ubuntu/code_now
