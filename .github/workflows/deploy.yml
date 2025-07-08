@@ -23,43 +23,50 @@ jobs:
         set -e # Exit immediately if a command exits with a non-zero status.
 
         echo "--- Starting Deployment on EC2 ---"
+        echo "Verifying current user and permissions:"
         echo "Current user: $(whoami)"
-        echo "Current directory: $(pwd)"
+        echo "User ID and groups: $(id)"
+        echo "Current working directory: $(pwd)"
 
-        echo "Checking target directory status before cd..."
-        ls -ld /home/ubuntu/code_now || true # 檢查目錄狀態，即使失敗也繼續
-        echo "Ensuring target directory exists..."
-        mkdir -p /home/ubuntu/code_now # 確保目錄存在
+        echo "Checking /home directory permissions..."
+        ls -ld /home
 
-        echo "--- Starting Deployment on EC2 ---"
-          cd /home/ubuntu/code_now # 替換為你在 EC2 上的專案路徑
-          git pull origin main # 拉取最新程式碼
-          echo "Latest code pulled."
-          
-          # 設定環境變數，這些變數會被 docker-compose 讀取並傳遞給容器
-          export VITE_SOCKET_URL="${{ secrets.VITE_SOCKET_URL }}"
-          export CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}"
-          export MAX_EDITORS="${{ secrets.MAX_EDITORS }}"
+        echo "Checking /home/ubuntu directory permissions..."
+        ls -ld /home/ubuntu
 
-          echo "Environment variables set: MAX_EDITORS=$MAX_EDITORS"
+        echo "Attempting to create project directory with sudo..."
+        sudo mkdir -p /home/ubuntu/code_now
+        echo "Attempting to set ownership of project directory..."
+        sudo chown -R $(whoami):$(whoami) /home/ubuntu/code_now
 
-          echo "Stopping and removing old containers..."
-          docker-compose down --volumes # 停止並移除舊的容器和卷
-          echo "Old containers and volumes removed."
+        echo "Verifying project directory status after creation/ownership change..."
+        ls -ld /home/ubuntu/code_now
 
-          echo "Removing old Docker images..."
-          docker rmi $(docker images -q --filter "dangling=true") || true # 移除懸空映像
-          docker rmi $(docker images -q --filter "label=com.docker.compose.project=code_now") || true # 移除專案相關映像
-          echo "Old Docker images removed."
+        echo "Attempting to change into project directory..."
+        cd /home/ubuntu/code_now
+        echo "Successfully changed directory to: $(pwd)"
 
-          echo "Building and starting new containers..."
-          docker-compose up -d --build # 重建並啟動新的容器
-          echo "New containers built and started."
+        echo "--- Basic Directory Setup Complete. ---"
+        # 以下是原來的部署邏輯，暫時註釋掉，待解決目錄問題後再恢復
+        # git pull origin main # 拉取最新程式碼
+        # echo "Latest code pulled."
+        
+        # export VITE_SOCKET_URL="${{ secrets.VITE_SOCKET_URL }}"
+        # export CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}"
+        # export MAX_EDITORS="${{ secrets.MAX_EDITORS }}"
+        # echo "Environment variables set: MAX_EDITORS=$MAX_EDITORS"
 
-          echo "Verifying running containers..."
-          docker ps -a # 顯示所有容器狀態
-          docker images # 顯示所有映像
+        # docker-compose down --volumes # 停止並移除舊的容器和卷
+        # echo "Old containers and volumes removed."
 
-          echo "--- Deployment to EC2 Finished ---"
+        # docker rmi $(docker images -q --filter "dangling=true") || true
+        # docker rmi $(docker images -q --filter "label=com.docker.compose.project=code_now") || true
+        # echo "Old Docker images removed."
 
-        echo "--- Deployment to EC2 Finished ---"
+        # docker-compose up -d --build # 重建並啟動新的容器
+        # echo "New containers built and started."
+
+        # docker ps -a
+        # docker images
+
+        echo "--- Deployment to EC2 Finished (Partial) ---"
