@@ -43,8 +43,6 @@ jobs:
         echo "Ensuring /home/ubuntu directory exists and has correct ownership..."
         sudo mkdir -p /home/ubuntu # Create /home/ubuntu if it doesn't exist
         sudo chown -R ${{ secrets.EC2_USERNAME }}:${{ secrets.EC2_USERNAME }} /home/ubuntu # Ensure ownership
-        echo "/home/ubuntu directory status after ensuring existence and ownership:"
-        ls -ld /home/ubuntu
 
         echo "Ensuring target project directory exists with sudo..."
         sudo mkdir -p /home/ubuntu/code_now
