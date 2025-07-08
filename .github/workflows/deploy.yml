@@ -31,45 +31,35 @@ jobs:
         echo "Ensuring target directory exists..."
         mkdir -p /home/ubuntu/code_now # 確保目錄存在
 
-        cd /home/ubuntu/code_now # 替換為你在 EC2 上的專案路徑
-        echo "Changed directory to: $(pwd)"
+        echo "--- Starting Deployment on EC2 ---"
+          cd /home/ubuntu/code_now # 替換為你在 EC2 上的專案路徑
+          git pull origin main # 拉取最新程式碼
+          echo "Latest code pulled."
+          
+          # 設定環境變數，這些變數會被 docker-compose 讀取並傳遞給容器
+          export VITE_SOCKET_URL="${{ secrets.VITE_SOCKET_URL }}"
+          export CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}"
+          export MAX_EDITORS="${{ secrets.MAX_EDITORS }}"
 
-        echo "Checking git status before pull..."
-        git status
-        echo "Current commit before pull:"
-        git log -1
+          echo "Environment variables set: MAX_EDITORS=$MAX_EDITORS"
 
-        echo "Pulling latest code from main branch..."
-        git pull origin main # 拉取最新程式碼
-        echo "Latest code pulled."
+          echo "Stopping and removing old containers..."
+          docker-compose down --volumes # 停止並移除舊的容器和卷
+          echo "Old containers and volumes removed."
 
-        echo "Checking git status after pull..."
-        git status
-        echo "Current commit after pull:"
-        git log -1
-        
-        # 設定環境變數，這些變數會被 docker-compose 讀取並傳遞給容器
-        export VITE_SOCKET_URL="${{ secrets.VITE_SOCKET_URL }}"
-        export CORS_ORIGIN="${{ secrets.CORS_ORIGIN }}"
-        export MAX_EDITORS="${{ secrets.MAX_EDITORS }}"
+          echo "Removing old Docker images..."
+          docker rmi $(docker images -q --filter "dangling=true") || true # 移除懸空映像
+          docker rmi $(docker images -q --filter "label=com.docker.compose.project=code_now") || true # 移除專案相關映像
+          echo "Old Docker images removed."
 
-        echo "Environment variables set: MAX_EDITORS=$MAX_EDITORS"
+          echo "Building and starting new containers..."
+          docker-compose up -d --build # 重建並啟動新的容器
+          echo "New containers built and started."
 
-        echo "Stopping and removing old containers..."
-        docker-compose down --volumes # 停止並移除舊的容器和卷
-        echo "Old containers and volumes removed."
+          echo "Verifying running containers..."
+          docker ps -a # 顯示所有容器狀態
+          docker images # 顯示所有映像
 
-        echo "Removing old Docker images..."
-        docker rmi $(docker images -q --filter "dangling=true") || true # 移除懸空映像
-        docker rmi $(docker images -q --filter "label=com.docker.compose.project=code_now") || true # 移除專案相關映像
-        echo "Old Docker images removed."
-
-        echo "Building and starting new containers..."
-        docker-compose up -d --build # 重建並啟動新的容器
-        echo "New containers built and started."
-
-        echo "Verifying running containers..."
-        docker ps -a # 顯示所有容器狀態
-        docker images # 顯示所有映像
+          echo "--- Deployment to EC2 Finished ---"
 
         echo "--- Deployment to EC2 Finished ---"
