@@ -34,4 +34,6 @@ Thumbs.db
 .env.production.local
 
 # Certbot data
-data/
+data/*
+!data/certbot/conf/options-ssl-nginx.conf
+!data/certbot/conf/ssl-dhparams.pem
