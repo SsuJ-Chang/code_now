@@ -38,11 +38,11 @@ jobs:
             "${{ secrets.MAX_EDITORS }}" > .env
 
           # Stop the running containers
-          docker-compose down
+          docker compose down
           echo "--- Old containers stopped. ---"
           
           # Build and start new containers
-          docker-compose up -d --build
+          docker compose up -d --build
           echo "--- Building and starting new containers... ---"
           
           echo "--- Deployment to EC2 Finished ---"
