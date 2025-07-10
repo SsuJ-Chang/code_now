@@ -67,7 +67,7 @@ function App() {
     return () => {
       newSocket.disconnect();
     };
-  }, [canEdit]); // 監聽 canEdit 變化，以便在 editor-count-update 中正確判斷
+  }, []); // 空依賴項陣列確保 effect 只在掛載時執行一次
 
   const handleLanguageChange = (lang: string) => {
     if (!canEdit) return;

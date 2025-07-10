@@ -3,6 +3,8 @@ services:
   server:
     build:
       context: ./server
+      no_cache: true
+      pull: true
     container_name: code_now_server
     ports:
       - "4000:4000"
