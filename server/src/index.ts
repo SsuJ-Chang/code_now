@@ -15,6 +15,7 @@ const io = new Server(server, {
 
 let pythonCode = process.env.DEFAULT_PYTHON_CODE || '# Start typing Python code...';
 let javascriptCode = process.env.DEFAULT_JAVASCRIPT_CODE || '// Start typing JavaScript code...';
+let currentLanguage = 'javascript'; // 追蹤當前語言
 
 // 儲存所有連線的 Socket ID，用於計算當前編輯者數量
 const connectedEditors = new Set<string>();
@@ -37,6 +38,7 @@ io.on('connection', (socket) => {
   socket.emit('initial-state', {
     python: pythonCode,
     javascript: javascriptCode,
+    language: currentLanguage, // 傳送當前語言
     canEdit: canEdit,
     maxEditors: MAX_EDITORS,
     currentEditors: connectedEditors.size
@@ -63,6 +65,7 @@ io.on('connection', (socket) => {
       console.log(`Viewer ${socket.id} attempted to change language.`);
       return; // 沒有編輯權限，直接返回
     }
+    currentLanguage = lang; // 更新當前語言
     // Broadcast the language change to all clients
     io.emit('language-change', lang);
   });

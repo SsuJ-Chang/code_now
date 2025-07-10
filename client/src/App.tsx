@@ -28,9 +28,10 @@ function App() {
       console.log('Disconnected from server');
     });
 
-    newSocket.on('initial-state', (data: { python: string, javascript: string, canEdit: boolean, maxEditors: number, currentEditors: number }) => {
+    newSocket.on('initial-state', (data: { python: string, javascript: string, language: string, canEdit: boolean, maxEditors: number, currentEditors: number }) => {
       setPythonCode(data.python);
       setJavascriptCode(data.javascript);
+      setLanguage(data.language); // 設定初始語言
       setCanEdit(data.canEdit);
       if (!data.canEdit) {
         setViewOnlyMessage(`目前已達最大共筆人數 (${data.maxEditors} 人)。您目前只有觀看權限。`);
