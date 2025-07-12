@@ -5,3 +5,28 @@
   50% { opacity: 1; }
   100% { opacity: 0; }
 }
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: #282c34;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #4f5b66;
+  border-radius: 6px;
+  border: 3px solid #282c34;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #6a7a89;
+}
+
+/* Hide scrollbar arrows */
+::-webkit-scrollbar-button {
+  display: none;
+}
