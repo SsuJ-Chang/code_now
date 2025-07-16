@@ -40,13 +40,7 @@ function App() {
       }
     });
 
-    newSocket.on('code-update', (data: { language: string, code: string }) => {
-      if (data.language === 'python') {
-        setPythonCode(data.code);
-      } else {
-        setJavascriptCode(data.code);
-      }
-    });
+    
 
     newSocket.on('language-change', (lang: string) => {
       setLanguage(lang);
@@ -79,11 +73,6 @@ function App() {
 
   const handleCodeChange = (code: string) => {
     if (!canEdit) return;
-    if (language === 'python') {
-      setPythonCode(code);
-    } else {
-      setJavascriptCode(code);
-    }
     if (socket) {
       socket.emit('code-update', { language, code });
     }
