@@ -83,9 +83,9 @@ function App() {
   return (
     <div className="bg-gray-900 text-white min-h-screen flex flex-col">
       <Header 
-        language={language} 
-        setLanguage={handleLanguageChange} 
-        isConnected={isConnected} 
+        language={language}
+        setLanguage={handleLanguageChange}
+        isConnected={isConnected}
       />
       <main className="flex-grow">
         {viewOnlyMessage && (
@@ -94,11 +94,11 @@ function App() {
           </div>
         )}
         <Editor 
-          language={language} 
-          code={currentCode} 
-          onCodeChange={handleCodeChange} 
-          socket={socket} 
-          canEdit={canEdit} 
+          language={language}
+          code={currentCode}
+          onCodeChange={handleCodeChange}
+          socket={socket}
+          canEdit={canEdit}
         />
       </main>
     </div>

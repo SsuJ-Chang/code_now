@@ -184,17 +184,11 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket, canEdit
     };
   }, [socket, language]);
 
-  const lastSelection = useRef<any>(null);
+  const throttleTimeout = useRef<number | null>(null);
 
   const handleEditorUpdate = (viewUpdate: any) => {
     // 只有在 canEdit 為 true 時才發送游標和選取範圍更新
     if (canEdit && viewUpdate.selectionSet && socket) {
-      const selection = viewUpdate.view.state.selection;
-      if (JSON.stringify(selection) === JSON.stringify(lastSelection.current)) {
-        return;
-      }
-      lastSelection.current = selection;
-
       if (throttleTimeout.current) {
         clearTimeout(throttleTimeout.current);
       }
