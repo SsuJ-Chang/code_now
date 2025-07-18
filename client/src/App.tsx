@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import io, { Socket } from 'socket.io-client';
 import Header from './components/Header';
 import Editor from './components/Editor';
@@ -63,20 +63,20 @@ function App() {
     };
   }, []); // 空依賴項陣列確保 effect 只在掛載時執行一次
 
-  const handleLanguageChange = (lang: string) => {
+  const handleLanguageChange = useCallback((lang: string) => {
     if (!canEdit) return;
     setLanguage(lang);
     if (socket) {
       socket.emit('language-change', lang);
     }
-  };
+  }, [socket, canEdit]);
 
-  const handleCodeChange = (code: string) => {
+  const handleCodeChange = useCallback((code: string) => {
     if (!canEdit) return;
     if (socket) {
       socket.emit('code-update', { language, code });
     }
-  };
+  }, [socket, canEdit, language]);
 
   const currentCode = language === 'python' ? pythonCode : javascriptCode;
 
