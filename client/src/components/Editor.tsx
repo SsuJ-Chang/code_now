@@ -160,6 +160,17 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket, canEdit
     }
   }, [remoteSelections]);
 
+  useEffect(() => {
+    const view = editorViewRef.current;
+    if (view && view.state.doc.toString() !== code) {
+      view.dispatch({
+        changes: { from: 0, to: view.state.doc.length, insert: code },
+        selection: view.state.selection,
+        scrollIntoView: false,
+      });
+    }
+  }, [code]);
+
   const throttleTimeout = useRef<number | null>(null);
 
   const handleEditorUpdate = (viewUpdate: any) => {
