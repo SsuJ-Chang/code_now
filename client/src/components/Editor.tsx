@@ -39,6 +39,7 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket, canEdit
   const [remoteSelections, setRemoteSelections] = useState<Record<string, RemoteSelection>>({});
   const editorViewRef = useRef<EditorView | null>(null);
   const cursorTimers = useRef<Map<string, number>>(new Map());
+  const prevLangRef = useRef(language);
 
   const extensions = language === 'javascript' ? [javascript({ jsx: true })] : [python()];
 
@@ -162,14 +163,21 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket, canEdit
 
   useEffect(() => {
     const view = editorViewRef.current;
-    if (view && view.state.doc.toString() !== code) {
+    if (!view) return;
+
+    const langHasChanged = prevLangRef.current !== language;
+    if (langHasChanged) {
+      prevLangRef.current = language;
+    }
+
+    if (view.state.doc.toString() !== code || langHasChanged) {
       view.dispatch({
-        changes: { from: 0, to: view.state.doc.length, insert: code },
-        selection: view.state.selection,
-        scrollIntoView: false,
+        changes: { from: 0, to: view.state.doc.length, insert: code || '' },
+        selection: langHasChanged ? { anchor: 0 } : view.state.selection,
+        scrollIntoView: langHasChanged,
       });
     }
-  }, [code]);
+  }, [code, language]);
 
   const throttleTimeout = useRef<number | null>(null);
 
