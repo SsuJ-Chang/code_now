@@ -40,8 +40,6 @@ function App() {
       }
     });
 
-    
-
     newSocket.on('language-change', (lang: string) => {
       setLanguage(lang);
     });
@@ -58,8 +56,19 @@ function App() {
       }
     });
 
+    const handleCodeUpdate = (data: { language: string, code: string }) => {
+      if (data.language === 'python') {
+        setPythonCode(data.code);
+      } else {
+        setJavascriptCode(data.code);
+      }
+    };
+
+    newSocket.on('code-update', handleCodeUpdate);
+
     return () => {
       newSocket.disconnect();
+      newSocket.off('code-update', handleCodeUpdate);
     };
   }, []); // 空依賴項陣列確保 effect 只在掛載時執行一次
 
@@ -73,6 +82,13 @@ function App() {
 
   const handleCodeChange = useCallback((code: string) => {
     if (!canEdit) return;
+
+    if (language === 'python') {
+      setPythonCode(code);
+    } else {
+      setJavascriptCode(code);
+    }
+
     if (socket) {
       socket.emit('code-update', { language, code });
     }

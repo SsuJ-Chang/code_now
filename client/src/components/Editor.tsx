@@ -160,30 +160,6 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket, canEdit
     }
   }, [remoteSelections]);
 
-  useEffect(() => {
-    if (!socket) return;
-
-    const handleCodeUpdate = (data: { language: string, code: string }) => {
-      if (data.language === language && editorViewRef.current) {
-        const view = editorViewRef.current;
-        if (view.state.doc.toString() !== data.code) {
-          const transaction = view.state.update({
-            changes: { from: 0, to: view.state.doc.length, insert: data.code },
-            selection: view.state.selection, // Preserve selection
-            scrollIntoView: false, // Prevent scrolling
-          });
-          view.dispatch(transaction);
-        }
-      }
-    };
-
-    socket.on('code-update', handleCodeUpdate);
-
-    return () => {
-      socket.off('code-update', handleCodeUpdate);
-    };
-  }, [socket, language]);
-
   const throttleTimeout = useRef<number | null>(null);
 
   const handleEditorUpdate = (viewUpdate: any) => {
@@ -199,7 +175,7 @@ const Editor: React.FC<Props> = ({ language, code, onCodeChange, socket, canEdit
         }));
         socket.emit('cursor-selection-update', { ranges: selectionRanges });
         throttleTimeout.current = null;
-      }, 200);
+      }, 50);
     }
   };
 
